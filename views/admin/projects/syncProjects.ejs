@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>TT | Admin</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="/css/homeStyles.css">
+
+  <!-- Font Awesome JS -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+    integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+    crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+    integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+    crossorigin="anonymous"></script>
+
+  <link href="https://raw.githack.com/ttskch/select2-bootstrap4-theme/master/dist/select2-bootstrap4.css"
+    rel="stylesheet">
+
+  <!-- Select 2 script and css -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+  <form action="/admin/project/sync" method="post">
+    <div class="wrapper">
+      <!-- Sidebar Holder -->
+      <% include ../../Navbar.ejs %>
+
+      <input type="hidden" name="id" value="<%= typeof project !== 'undefined' ? project.id : '' %>" />
+      <!-- Page Content Holder -->
+      <div id="content">
+        <div style="margin-bottom: 20px;" class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-align-left"></i>
+            <span>Toggle Sidebar</span>
+          </button>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class='card border-0 shadow-sm mb-5 bg-white rounded'>
+            <h5 class="card-header">
+              <%= typeof user !== 'undefined' ? user.firstName + ' ' + user.lastName : 'Add Project' %></h5>
+            <div class="card-body">
+              <form>
+                <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Project Name
+                      </label>
+                      <input type="text" class="form-control" name="projectName"
+                        value="<%= typeof project != 'undefined' ? project.name : '' %>" />
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Project Type
+                      </label>
+                      <div class="dropdown bootstrap-select">
+                        <select class="form-control" name="projectType">
+                          <option>Select Project Type</option>
+                          <option>Hourly</option>
+                          <option>Fixed Price</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Project Status
+                      </label>
+                      <div class="dropdown bootstrap-select">
+                        <select class="form-control" name="projectStatus">
+                          <option>Select Project Type</option>
+                          <option>Running</option>
+                          <option>On hold</option>
+                          <option>Delivered</option>
+                        </select>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Hourly Rate
+                      </label>
+                      <input type="number" class="form-control" name="hourlyRate"
+                        value="<%= typeof project != 'undefined' ? project.name : '' %>" />
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Project Lead
+                      </label>
+                      <div class="dropdown bootstrap-select">
+                        <select class="form-control" name="projectLead" id="projectLead" style="width: 100%">
+                          <% for(var i = 0; i < users.length; i++) { %>
+                          <option value="<%= users[i].id %>">
+                            <%= users[i].firstName + " " +users[i].lastName %>
+                          </option>
+                          <% } %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Client
+                      </label>
+                      <div class="dropdown bootstrap-select">
+                        <select class="form-control" name="client" id="client" style="width: 100%; height: 100%;">
+                          <% for(var i = 0; i < clients.length; i++) { %>
+                          <option value="<%= clients[i].id %>">
+                            <%= clients[i].name %>
+                          </option>
+                          <% } %>
+                        </select>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="col-form-label">
+                        Developers
+                      </label>
+                      <div class="dropdown bootstrap-select">
+                        <select class="form-control" name="developers" id="developers" multiple="multiple"
+                          style="width: 100%">
+                          <% for(var i = 0; i < users.length; i++) { %>
+                          <option value="<%= users[i].id %>">
+                            <%= users[i].firstName + " " + users[i].lastName %>
+                          </option>
+                          <% } %>
+                        </select>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+                <div class="row">
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
+                    <button type="submit" class="btn btn-success">
+                      <%= typeof project !== 'undefined' ? 'Update Project' : 'Add Project' %>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <!-- Popper.JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+    integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+    crossorigin="anonymous"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+    integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+    crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+
+    $(document).ready(function () {
+      $('#projectLead').select2();
+    });
+
+    $(document).ready(function () {
+      $('#developers').select2();
+    })
+  </script>
+</body>
+
+</html>

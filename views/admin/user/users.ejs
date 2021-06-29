@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>TT | Admin</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"
+    rel="stylesheet">
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="/css/homeStyles.css">
+
+  <!-- Font Awesome JS -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+    integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+    crossorigin="anonymous"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+    integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <h1 style="display: none;" id="dataSet"><%= JSON.stringify(users) %></h1>
+  <div class="wrapper">
+    <!-- Sidebar Holder -->
+    <% include ../../Navbar.ejs %>
+    <!-- Page Content Holder -->
+    <div id="content">
+      <div style="margin-bottom: 20px;" class="container-fluid">
+        <button type="button" id="sidebarCollapse" class="btn btn-info">
+          <i class="fas fa-align-left"></i>
+        </button>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="card">
+            <div class="card-header">
+              <span>Users</span>
+              <button type="button" class="btn btn-sm btn-success" style="float:right;">
+                <a href="/admin/user/add">Add users</a>
+              </button>
+            </div>
+
+
+            <div class="card-body xs-card-scroll table-responsive">
+              <table id="listUsers" style="width:100%"
+                class="table table-bordered table-hover userDataTable dataTable no-footer display nowrap">
+                <thead>
+                  <th>Name</th>
+                  <th style="display: none;">id</th>
+                  <th>Experience</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Technology</th>
+                  <th>Designation</th>
+                  <th>Actions</th>
+                </thead>
+                <tbody>
+                  <% for(var i=0; i < users.length; i++) { %>
+                  <tr>
+                    <td><%= users[i].firstName + ' ' + users[i].lastName %></td>
+                    <td style="display: none;" id="rowId"><%= users[i].id %></td>
+                    <td><%= users[i].experience %></td>
+                    <td><%= users[i].email %></td>
+                    <td><%= users[i]['role.role'] %></td>
+                    <td><%= users[i]['technology.technologyName'] %></td>
+                    <td><%= users[i].designation %></td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-light editUser">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger deleteBtnClick">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <!-- Popper.JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+    integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+    crossorigin="anonymous"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+    integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+    crossorigin="anonymous"></script>
+
+  <!-- Datatable jQuery plugin css and jquery imports -->
+  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+
+
+  <script type="text/javascript">
+    var dataTable;
+
+    $(document).ready(function () {
+      $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+      });
+    });
+
+    $(document).ready(function () {
+      // var usersString = $("#dataSet").html();
+      // var parsedDataSet = JSON.parse(usersString);
+      dataTable = $('#listUsers').DataTable();
+    });
+
+    $(document).ready(function () {
+      $('.deleteBtnClick').click(function () {
+        var $row = $(this).closest('tr');
+        var $rowId = $row.find("#rowId").text();
+        jQuery.get({
+          url: '/admin/user/delete/' + $rowId, success: function (data) {
+            if (data.status) {
+              dataTable.row($row).remove().draw();
+            }
+
+            // TODO: apply a check here or in the controller for the admin cannot be deleted
+          }
+        });
+      });
+
+      $('.editUser').click(function () {
+        var $row = $(this).closest('tr');
+        var $rowId = $row.find("#rowId").text();
+        // jQuery.get({
+        //   url: '/admin/user/edit/' + $rowId, success: function (data) {
+        //     console.log('hello')
+        //   }
+        // });
+        // console.log('rowid', $rowId);
+        window.location.replace("/admin/user/edit/" + $rowId);
+      });
+    })
+  </script>
+</body>
+
+</html>
